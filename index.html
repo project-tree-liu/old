@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>木脉八象 - 古树人格测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2d5a27 0%, #4a7c59 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            margin-top: 20px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-section {
+            padding: 30px;
+            display: none;
+        }
+
+        .quiz-section.active {
+            display: block;
+        }
+
+        .dimension-title {
+            font-size: 16px;
+            color: #4a7c59;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 4px solid #4a7c59;
+        }
+
+        .question-card {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #4a7c59;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-size: 14px;
+            margin-right: 12px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .options-list {
+            list-style: none;
+        }
+
+        .option-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .option-item:hover {
+            border-color: #4a7c59;
+            background: #f0f8f2;
+        }
+
+        .option-item.selected {
+            border-color: #4a7c59;
+            background: #e8f5ec;
+        }
+
+        .option-item.selected .option-label {
+            background: #4a7c59;
+            color: white;
+        }
+
+        .option-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-right: 15px;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .option-text {
+            font-size: 15px;
+            color: #444;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2d5a27 0%, #4a7c59 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(74, 124, 89, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .result-section {
+            padding: 40px 30px;
+            display: none;
+            text-align: center;
+        }
+
+        .result-section.active {
+            display: block;
+        }
+
+        .result-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2d5a27 0%, #4a7c59 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: white;
+        }
+
+        .result-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .result-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .result-tree {
+            font-size: 18px;
+            color: #4a7c59;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .result-description {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: left;
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tag {
+            background: #e8f5ec;
+            color: #4a7c59;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .dimension-scores {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .score-item {
+            background: #f0f8f2;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .score-value {
+            font-size: 28px;
+            color: #4a7c59;
+            font-weight: 600;
+        }
+
+        .score-type {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .start-section {
+            padding: 60px 30px;
+            text-align: center;
+        }
+
+        .start-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2d5a27 0%, #4a7c59 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+        }
+
+        .start-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .start-desc {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .start-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .start-info h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .start-info ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .start-info li {
+            font-size: 14px;
+            color: #555;
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .start-info li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 8px;
+            height: 8px;
+            background: #4a7c59;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .quiz-section, .result-section, .start-section {
+                padding: 20px 15px;
+            }
+            
+            .dimension-scores {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>木脉八象 · 古树人格测试</h1>
+            <p>探寻你的生命古树，发现内在力量</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div style="margin-top: 10px; font-size: 13px; opacity: 0.8;" id="progressText">0/20</div>
+        </div>
+
+        <div class="start-section active" id="startSection">
+            <div class="start-icon">🌳</div>
+            <h2 class="start-title">木脉八象</h2>
+            <p class="start-desc">每个人心中都有一棵古树，它扎根于灵魂深处，见证着生命的成长与蜕变。通过20道题，探寻你的古树人格，发现内在的力量与特质。</p>
+            
+            <div class="start-info">
+                <h3>测试说明</h3>
+                <ul>
+                    <li>共20道题，分为4个维度，每个维度5题</li>
+                    <li>选项分值：从不=1分 | 很少=2分 | 有时=3分 | 经常=4分 | 总是=5分</li>
+                    <li>完成后将匹配你的专属古树人格</li>
+                    <li>请根据真实感受作答，无对错之分</li>
+                </ul>
+            </div>
+
+            <button class="btn btn-primary" onclick="startQuiz()">开始测试</button>
+        </div>
+
+        <div class="quiz-section" id="quizSection">
+            <div class="dimension-title" id="dimensionTitle">维度A：根性</div>
+            
+            <div id="questionsContainer"></div>
+
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" disabled>上一题</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">下一题</button>
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="result-icon" id="resultIcon">🌳</div>
+            <h2 class="result-title" id="resultTitle">你的古树人格</h2>
+            <p class="result-subtitle" id="resultSubtitle">木脉八象 · 古树人格测试结果</p>
+            
+            <div class="result-tree" id="resultTree">木葱型 · 千年白榆</div>
+            
+            <div class="result-description" id="resultDescription">
+                你如同扎根村落千年的老榆，天生擅长向外释放温柔善意，共情力极强。习惯性照顾身边人的情绪。同时内心有着长久不变的坚守，偏爱安稳有序的生活。是身边所有人的情绪避风港，外表柔软温和，内里藏着扎根大地般坚韧长久的力量。
+            </div>
+
+            <div class="result-tags" id="resultTags">
+                <span class="tag">温柔包容</span>
+                <span class="tag">长久坚守</span>
+                <span class="tag">治愈守护</span>
+                <span class="tag">烟火善意</span>
+            </div>
+
+            <div class="dimension-scores">
+                <div class="score-item">
+                    <div class="score-label">根性</div>
+                    <div class="score-value" id="scoreA">15</div>
+                    <div class="score-type" id="typeA">折中</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">干性</div>
+                    <div class="score-value" id="scoreB">15</div>
+                    <div class="score-type" id="typeB">折中</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">心性</div>
+                    <div class="score-value" id="scoreC">15</div>
+                    <div class="score-type" id="typeC">折中</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">长势</div>
+                    <div class="score-value" id="scoreD">15</div>
+                    <div class="score-type" id="typeD">折中</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="restartQuiz()">再测一次</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                dimension: 'A',
+                dimensionName: '根性',
+                question: '休息日恢复精力，你更偏向哪种状态？',
+                options: [
+                    { text: '从不外出，独自安静独处放空', value: 1 },
+                    { text: '很少出门，仅偶尔和熟人小聚', value: 2 },
+                    { text: '有时约朋友，有时独自待着', value: 3 },
+                    { text: '经常主动邀约他人出门游玩', value: 4 },
+                    { text: '总是热衷热闹聚会，人群能快速充能', value: 5 }
+                ]
+            },
+            {
+                dimension: 'A',
+                dimensionName: '根性',
+                question: '内心低落难受时，你的处理方式？',
+                options: [
+                    { text: '从不找人倾诉，全部独自消化情绪', value: 1 },
+                    { text: '很少对外诉说，自行缓慢缓解心情', value: 2 },
+                    { text: '看情况，偶尔会和好友吐吐槽心事', value: 3 },
+                    { text: '经常主动找人倾诉，释放内心压力', value: 4 },
+                    { text: '第一时间需要他人陪伴，无法独自消化坏情绪', value: 5 }
+                ]
+            },
+            {
+                dimension: 'A',
+                dimensionName: '根性',
+                question: '身处全是陌生人的场合，你的感受是？',
+                options: [
+                    { text: '极度拘谨，只想尽快离开独自待着', value: 1 },
+                    { text: '浑身不自在，尽量沉默躲在角落', value: 2 },
+                    { text: '状态中立，看人多少调整言行', value: 3 },
+                    { text: '乐于主动搭话，快速融入群体', value: 4 },
+                    { text: '完全放松自在，享受认识新朋友', value: 5 }
+                ]
+            },
+            {
+                dimension: 'A',
+                dimensionName: '根性',
+                question: '遇到难以解决的难题，你的习惯是？',
+                options: [
+                    { text: '全程独立思考，绝不向任何人求助', value: 1 },
+                    { text: '优先自行钻研，实在无解才询问他人', value: 2 },
+                    { text: '一半独立思考，一半和别人讨论思路', value: 3 },
+                    { text: '习惯和他人交流想法，协同解决问题', value: 4 },
+                    { text: '任何事第一时间找人商量协作', value: 5 }
+                ]
+            },
+            {
+                dimension: 'A',
+                dimensionName: '根性',
+                question: '通勤、午休这类碎片化空闲时间，你会？',
+                options: [
+                    { text: '安静发呆、看书，完全不进行社交互动', value: 1 },
+                    { text: '刷线上内容，但不私聊、不分享动态', value: 2 },
+                    { text: '偶尔发布动态，极少主动找人聊天', value: 3 },
+                    { text: '频繁和朋友线上分享日常、闲聊', value: 4 },
+                    { text: '时时刻刻都希望和他人保持沟通', value: 5 }
+                ]
+            },
+            {
+                dimension: 'B',
+                dimensionName: '干性',
+                question: '做重要决定时，你更信赖？',
+                options: [
+                    { text: '过往经验、既定规则、客观事实', value: 1 },
+                    { text: '优先参考成熟、现成的解决方案', value: 2 },
+                    { text: '结合过往经验与新想法综合判断', value: 3 },
+                    { text: '更看重直觉、灵感与各种可能性', value: 4 },
+                    { text: '完全跟随脑洞，不受过往经验束缚', value: 5 }
+                ]
+            },
+            {
+                dimension: 'B',
+                dimensionName: '干性',
+                question: '学习全新事物，你的偏好？',
+                options: [
+                    { text: '严格按照教程步骤，标准化落地执行', value: 1 },
+                    { text: '遵循规范流程，不会随意改动操作', value: 2 },
+                    { text: '基础跟随教程，少量地方自由发挥', value: 3 },
+                    { text: '反感死板步骤，喜欢自由探索尝试', value: 4 },
+                    { text: '直接抛开教程，大胆创新改造玩法', value: 5 }
+                ]
+            },
+            {
+                dimension: 'B',
+                dimensionName: '干性',
+                question: '看待一件事物，你第一眼关注？',
+                options: [
+                    { text: '实际功能、逻辑细节、落地结果', value: 1 },
+                    { text: '实用价值、客观数据、细节参数', value: 2 },
+                    { text: '兼顾实用性与氛围感、创意感', value: 3 },
+                    { text: '画面氛围、想象空间、创意亮点', value: 4 },
+                    { text: '只在意独特脑洞、未来未知可能性', value: 5 }
+                ]
+            },
+            {
+                dimension: 'B',
+                dimensionName: '干性',
+                question: '分配工作、完成任务时，你更擅长？',
+                options: [
+                    { text: '复刻标准流程，严谨规避差错', value: 1 },
+                    { text: '规整执行任务，严格遵循固定模板', value: 2 },
+                    { text: '基础沿用模板，局部加入创意微调', value: 3 },
+                    { text: '灵活改动呈现形式，加入原创构思', value: 4 },
+                    { text: '打破全部固有框架，重新原创设计', value: 5 }
+                ]
+            },
+            {
+                dimension: 'B',
+                dimensionName: '干性',
+                question: '闲暇时观看、阅读内容，你的偏爱？',
+                options: [
+                    { text: '纪实历史、硬核科普、写实真实内容', value: 1 },
+                    { text: '客观纪实、资料文献类文字内容', value: 2 },
+                    { text: '纪实与文艺幻想类内容都会接触', value: 3 },
+                    { text: '插画、文艺氛围感、轻幻想内容', value: 4 },
+                    { text: '架空幻想、艺术脑洞、创意创作', value: 5 }
+                ]
+            },
+            {
+                dimension: 'C',
+                dimensionName: '心性',
+                question: '朋友伤心难过向你求助，你的第一反应？',
+                options: [
+                    { text: '理性梳理矛盾，客观分析对错并给出解决方案', value: 1 },
+                    { text: '先理清事件逻辑，再简单安抚对方情绪', value: 2 },
+                    { text: '一边梳理道理，一边共情安慰对方', value: 3 },
+                    { text: '优先安抚情绪，之后再客观分析问题', value: 4 },
+                    { text: '全程照顾对方感受，完全迁就情绪', value: 5 }
+                ]
+            },
+            {
+                dimension: 'C',
+                dimensionName: '心性',
+                question: '和他人产生观点分歧、争执时，你会？',
+                options: [
+                    { text: '就事论事，分清利弊对错，不刻意维持和气', value: 1 },
+                    { text: '客观讲清道理，不会为了和谐妥协观点', value: 2 },
+                    { text: '平衡客观道理与对方感受，折中处理', value: 3 },
+                    { text: '优先照顾对方情绪，适当退让妥协', value: 4 },
+                    { text: '害怕冲突矛盾，主动让步维持和睦氛围', value: 5 }
+                ]
+            },
+            {
+                dimension: 'C',
+                dimensionName: '心性',
+                question: '身边人对你最普遍的评价是？',
+                options: [
+                    { text: '冷静理智、做事果断、拥有清晰原则底线', value: 1 },
+                    { text: '客观公正，处理事情条理清晰', value: 2 },
+                    { text: '理智与温柔平衡，根据场景切换状态', value: 3 },
+                    { text: '细心体贴，很擅长照顾他人情绪', value: 4 },
+                    { text: '共情力极强，习惯性迁就所有人', value: 5 }
+                ]
+            },
+            {
+                dimension: 'C',
+                dimensionName: '心性',
+                question: '团队协作安排事务，你优先看重？',
+                options: [
+                    { text: '规则公平、整体效率、最终完成结果', value: 1 },
+                    { text: '流程规范、每个人的任务完成度', value: 2 },
+                    { text: '兼顾工作效率与团队相处氛围', value: 3 },
+                    { text: '团队氛围、每一位成员的情绪感受', value: 4 },
+                    { text: '所有人开心舒适优先，弱化规则与效率', value: 5 }
+                ]
+            },
+            {
+                dimension: 'C',
+                dimensionName: '心性',
+                question: '面对他人不合理的请求，你的选择？',
+                options: [
+                    { text: '理性直接拒绝，坚守自身原则底线', value: 1 },
+                    { text: '委婉说明理由，但依旧坚持拒绝', value: 2 },
+                    { text: '酌情提供帮助，无法接受会坦诚说明难处', value: 3 },
+                    { text: '不好意思拒绝，勉强迁就对方需求', value: 4 },
+                    { text: '几乎不会拒绝他人，优先体谅别人', value: 5 }
+                ]
+            },
+            {
+                dimension: 'D',
+                dimensionName: '长势',
+                question: '日常的生活节奏，你更偏爱？',
+                options: [
+                    { text: '高度规律稳定，严格遵守固定作息计划', value: 1 },
+                    { text: '维持稳定节奏，排斥突发的大幅变动', value: 2 },
+                    { text: '基础规律稳定，允许少量灵活调整', value: 3 },
+                    { text: '随性松弛，不喜欢长期固定不变的计划', value: 4 },
+                    { text: '完全无规划，享受随机、未知的变化', value: 5 }
+                ]
+            },
+            {
+                dimension: 'D',
+                dimensionName: '长势',
+                question: '对待长期人生、学习目标，你的态度？',
+                options: [
+                    { text: '坚定守住方向，绝不轻易更改路线', value: 1 },
+                    { text: '认准路线稳步推进，抗拒大规模改动', value: 2 },
+                    { text: '大方向保持不变，细节灵活调整', value: 3 },
+                    { text: '根据现实状况，随时调整规划路线', value: 4 },
+                    { text: '没有固定长期目标，顺势改变前进方向', value: 5 }
+                ]
+            },
+            {
+                dimension: 'D',
+                dimensionName: '长势',
+                question: '进入完全陌生的全新环境，你会？',
+                options: [
+                    { text: '很难适应，长期怀念熟悉的旧环境', value: 1 },
+                    { text: '适应速度缓慢，需要很久获得安全感', value: 2 },
+                    { text: '慢慢适应，一段时间后习惯新环境', value: 3 },
+                    { text: '快速接纳新环境，乐于体验新鲜感', value: 4 },
+                    { text: '天生随遇而安，完全不排斥环境改变', value: 5 }
+                ]
+            },
+            {
+                dimension: 'D',
+                dimensionName: '长势',
+                question: '原本计划被突发事情彻底打乱，你的感受？',
+                options: [
+                    { text: '烦躁不安，心情会受到严重负面影响', value: 1 },
+                    { text: '内心不适，希望尽快恢复原定计划', value: 2 },
+                    { text: '短暂感到不适，很快调整好心态', value: 3 },
+                    { text: '觉得新鲜有趣，坦然接受变动', value: 4 },
+                    { text: '十分期待意外带来的全新体验', value: 5 }
+                ]
+            },
+            {
+                dimension: 'D',
+                dimensionName: '长势',
+                question: '长期处事的稳定风格更接近？',
+                options: [
+                    { text: '稳扎稳打、持之以恒、行事长久不变', value: 1 },
+                    { text: '循序渐进，不会轻易改变固有做事方式', value: 2 },
+                    { text: '以稳定为主，适度灵活变通', value: 3 },
+                    { text: '随机应变，根据场景调整处理方式', value: 4 },
+                    { text: '顺势而为，不固定单一处事模式', value: 5 }
+                ]
+            }
+        ];
+
+        const treeTypes = [
+            {
+                name: '木葱型 · 千年白榆',
+                icon: '🌳',
+                tags: ['温柔包容', '长久坚守', '治愈守护', '烟火善意'],
+                description: '你如同扎根村落千年的老榆，天生擅长向外释放温柔善意，共情力极强。习惯性照顾身边人的情绪。同时内心有着长久不变的坚守，偏爱安稳有序的生活。是身边所有人的情绪避风港，外表柔软温和，内里藏着扎根大地般坚韧长久的力量。',
+                condition: (a, b, c, d) => a >= 16 && c >= 16 && d >= 16
+            },
+            {
+                name: '木史型 · 黄帝手植柏',
+                icon: '🌲',
+                tags: ['沉静自持', '恪守本心', '务实严谨', '岁月沉淀'],
+                description: '你习惯向内汲取力量，偏爱独处思考；做事极度依赖过往经验与既定规则，追求稳定不变的节奏。你如同见证千年历史的古柏，恪守本心、严谨务实，自带厚重沉稳的气质，做事有分寸、有底线，是值得托付重任的可靠之人。',
+                condition: (a, b, c, d) => a <= 14 && b <= 14 && d <= 14
+            },
+            {
+                name: '木戊型 · 黄山迎客松',
+                icon: '🌲',
+                tags: ['独立自持', '理智果决', '意志坚韧', '守土不移'],
+                description: '你习惯独处蓄力，遇事优先理性判断、坚守原则，不轻易妥协；生活偏爱稳定规划，意志坚定不易动摇。像峭壁之上屹立千年的迎客松，独立强大、有边界感，内心有清晰底线，外表清冷疏离，却愿意为在意的人长久守候。',
+                condition: (a, b, c, d) => a <= 14 && b <= 14 && c <= 14 && d <= 14
+            },
+            {
+                name: '木愈型 · 延庆古毛梾',
+                icon: '🌳',
+                tags: ['向内自愈', '浪漫通透', '随遇而安', '富有灵思'],
+                description: '你习惯独处消化情绪，内心拥有丰富的想象力与创造力，不排斥生活里的各种变化，随遇而安。如同山野间自由生长的毛梾，擅长自我治愈，拥抱所有未知与变动，安静内敛却拥有丰富浪漫的精神世界，在变化里不断成长新生。',
+                condition: (a, b, c, d) => a <= 14 && b >= 16 && d >= 16
+            },
+            {
+                name: '木喧型 · 伏羲庙唐槐',
+                icon: '🌳',
+                tags: ['外向热忱', '温柔共情', '随性自在', '烟火烂漫'],
+                description: '你天生擅长在人群中获取活力，共情细腻，十分在意身边人的情绪，同时热爱生活里所有新鲜变化，不拘计划束缚。如同闹市庙宇旁的千年唐槐，接纳人间烟火，活泼温暖，乐于陪伴他人，享受随机、热闹、充满新鲜感的日常。',
+                condition: (a, b, c, d) => a >= 16 && c >= 16 && d >= 16 && b >= 16
+            },
+            {
+                name: '木染型 · 太行五角枫',
+                icon: '🍁',
+                tags: ['外向灵动', '创意充沛', '适应力强', '热烈自由'],
+                description: '你热衷社交、乐于向外表达自我，想象力充沛、热爱创新，完全不抗拒生活的各类突发变化，讨厌死板固定的规则。如同秋日漫山绚烂的五角枫，生命力鲜活热烈，思维天马行空，适应力极强，总能在多变的生活里创造属于自己的浪漫色彩。',
+                condition: (a, b, c, d) => a >= 16 && b >= 16 && d >= 16
+            },
+            {
+                name: '木清型 · 齐鲁千年流苏王',
+                icon: '🌸',
+                tags: ['清冷自持', '诗意浪漫', '安稳克制', '思绪丰盈'],
+                description: '你偏爱独处，不喜欢无意义的变动。如同开满白花的流苏古树，气质清雅淡然，精神世界浪漫丰盈，行事安稳克制，在不变的节奏里保留独一份的诗意脑洞。',
+                condition: (a, b, c, d) => a <= 14 && b >= 16 && c >= 16 && d <= 14
+            },
+            {
+                name: '木匠型 · 云南金丝楠',
+                icon: '🪵',
+                tags: ['清醒理智', '灵活变通', '独立果决', '匠心自持'],
+                description: '你习惯独处独立思考，遇事理性客观、坚守自身原则，不畏惧生活的各类变化，适应力极强。如同温润珍贵的金丝楠，内心清醒有分寸，逻辑清晰，能灵活应对各类突发状况，兼具理智底线与顺势变通的处事智慧。',
+                condition: (a, b, c, d) => a <= 14 && c <= 14 && d >= 16
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(20).fill(null);
+        let scores = { A: 0, B: 0, C: 0, D: 0 };
+
+        function startQuiz() {
+            document.getElementById('startSection').classList.remove('active');
+            document.getElementById('quizSection').classList.add('active');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            const container = document.getElementById('questionsContainer');
+            
+            document.getElementById('dimensionTitle').textContent = `维度${q.dimension}：${q.dimensionName} 第${currentQuestion + 1}题`;
+            
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="question-text">
+                        <span class="question-number">${currentQuestion + 1}</span>
+                        ${q.question}
+                    </div>
+                    <ul class="options-list">
+                        ${q.options.map((opt, idx) => `
+                            <li class="option-item ${answers[currentQuestion] === idx + 1 ? 'selected' : ''}" 
+                                onclick="selectOption(${idx + 1})">
+                                <span class="option-label">${String.fromCharCode(65 + idx)}</span>
+                                <span class="option-text">${opt.text}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+
+            updateProgress();
+            updateButtons();
+        }
+
+        function selectOption(value) {
+            answers[currentQuestion] = value;
+            renderQuestion();
+        }
+
+        function updateProgress() {
+            const answered = answers.filter(a => a !== null).length;
+            const percentage = (answered / questions.length) * 100;
+            document.getElementById('progressFill').style.width = `${percentage}%`;
+            document.getElementById('progressText').textContent = `${answered}/${questions.length}`;
+        }
+
+        function updateButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = '查看结果';
+            } else {
+                document.getElementById('nextBtn').textContent = '下一题';
+            }
+            
+            document.getElementById('nextBtn').disabled = answers[currentQuestion] === null;
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (answers[currentQuestion] === null) return;
+            
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                calculateResult();
+            }
+        }
+
+        function calculateResult() {
+            scores = { A: 0, B: 0, C: 0, D: 0 };
+            
+            questions.forEach((q, idx) => {
+                scores[q.dimension] += answers[idx];
+            });
+
+            const typeA = scores.A <= 14 ? 'A1 藏根' : scores.A >= 16 ? 'A2 舒枝' : '折中';
+            const typeB = scores.B <= 14 ? 'B1 守纹' : scores.B >= 16 ? 'B2 拓叶' : '折中';
+            const typeC = scores.C <= 14 ? 'C1 硬石' : scores.C >= 16 ? 'C2 温壤' : '折中';
+            const typeD = scores.D <= 14 ? 'D1 恒立' : scores.D >= 16 ? 'D2 随山' : '折中';
+
+            let result = treeTypes[0];
+            for (const tree of treeTypes) {
+                if (tree.condition(scores.A, scores.B, scores.C, scores.D)) {
+                    result = tree;
+                    break;
+                }
+            }
+
+            document.getElementById('resultIcon').textContent = result.icon;
+            document.getElementById('resultTitle').textContent = '你的古树人格';
+            document.getElementById('resultTree').textContent = result.name;
+            document.getElementById('resultDescription').textContent = result.description;
+            
+            document.getElementById('resultTags').innerHTML = result.tags.map(tag => 
+                `<span class="tag">${tag}</span>`
+            ).join('');
+
+            document.getElementById('scoreA').textContent = scores.A;
+            document.getElementById('typeA').textContent = typeA;
+            document.getElementById('scoreB').textContent = scores.B;
+            document.getElementById('typeB').textContent = typeB;
+            document.getElementById('scoreC').textContent = scores.C;
+            document.getElementById('typeC').textContent = typeC;
+            document.getElementById('scoreD').textContent = scores.D;
+            document.getElementById('typeD').textContent = typeD;
+
+            document.getElementById('quizSection').classList.remove('active');
+            document.getElementById('resultSection').classList.add('active');
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = new Array(20).fill(null);
+            scores = { A: 0, B: 0, C: 0, D: 0 };
+            
+            document.getElementById('resultSection').classList.remove('active');
+            document.getElementById('startSection').classList.add('active');
+            
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressText').textContent = '0/20';
+        }
+    </script>
+</body>
+</html>
